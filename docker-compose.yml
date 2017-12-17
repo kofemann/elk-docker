@@ -1,0 +1,57 @@
+version: '2'
+
+services:
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.0
+    ports:
+    - "9200:9200"
+    volumes:
+    -  /zfs-tank/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+    - cluster.name=docker-cluster
+    - discovery.zen.minimum_master_nodes=1
+    - "ES_JAVA_OPTS=-Xms8192m -Xmx8192m"
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash-oss:6.1.0
+    ports:
+    - "5044:5044"
+    links:
+    - es:elasticsearch
+    volumes:
+    - ./pipeline/:/usr/share/logstash/pipeline/ 
+
+  kibana:
+    depends_on:
+    - es
+    image: docker.elastic.co/kibana/kibana-oss:6.1.0
+    links:
+    - es:elasticsearch
+    environment:
+    - server.name=dcache-lab004.desy.de
+
+  nginx:
+    depends_on:
+    - kibana
+    image: h3nrik/nginx-ldap:latest
+    restart: always
+    links:
+    - kibana:kibana
+
+    volumes:
+    - ./etc/ssl:/etc/nginx/ssl
+    - ./etc/conf.d/nginx.conf:/nginx.conf
+    - ./etc/conf.d/service.conf:/etc/nginx/conf.d/service.conf
+    - ./etc/conf.d/ldap.conf:/etc/nginx/conf.d/ldap.conf
+
+    ports:
+    - "80:80"
+    - "443:443"
+
+    environment:
+    - TZ=Europe/Berlin
+    - LETSENCRYPT=false
+    - LE_EMAIL=tigran.mkrtchyan@desy.de
+    - LE_FQDN=dcache-lab004.desy.de
+    #- SSL_CERT=le-crt.pem
+    #- SSL_KEY=le-key.pem
