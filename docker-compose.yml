@@ -47,11 +47,3 @@ services:
     ports:
     - "80:80"
     - "443:443"
-
-    environment:
-    - TZ=Europe/Berlin
-    - LETSENCRYPT=false
-    - LE_EMAIL=tigran.mkrtchyan@desy.de
-    - LE_FQDN=dcache-lab004.desy.de
-    #- SSL_CERT=le-crt.pem
-    #- SSL_KEY=le-key.pem
