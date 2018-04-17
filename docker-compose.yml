@@ -2,9 +2,10 @@ version: '2'
 
 services:
   es:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.1
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.3
     ports:
     - "9200:9200"
+    - "9300:9300"
     volumes:
     -  /zfs-tank/elasticsearch:/usr/share/elasticsearch/data
     environment:
@@ -13,7 +14,7 @@ services:
     - "ES_JAVA_OPTS=-Xms8192m -Xmx8192m"
 
   logstash:
-    image: docker.elastic.co/logstash/logstash-oss:6.2.1
+    image: docker.elastic.co/logstash/logstash-oss:6.2.3
     ports:
     - "5044:5044"
     links:
@@ -21,10 +22,19 @@ services:
     volumes:
     - ./pipeline/:/usr/share/logstash/pipeline/ 
 
+  cerebro:
+    image: yannart/cerebro:latest
+    ports:
+    - "9001:9000"
+    depends_on:
+    - es
+    links:
+    - es:elasticsearch
+
   kibana:
     depends_on:
     - es
-    image: docker.elastic.co/kibana/kibana-oss:6.2.1
+    image: docker.elastic.co/kibana/kibana-oss:6.2.3
     links:
     - es:elasticsearch
     environment:
