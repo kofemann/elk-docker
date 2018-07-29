@@ -51,7 +51,7 @@ services:
   nginx:
     depends_on:
     - kibana
-    image: h3nrik/nginx-ldap:latest
+    image: dweomer/nginx-auth-ldap
     restart: always
     links:
     - kibana:kibana
