@@ -2,7 +2,7 @@ version: '2'
 
 services:
   es:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.2
     ports:
     - "9200:9200"
     - "9300:9300"
@@ -22,7 +22,7 @@ services:
         hard: 65536
 
   logstash:
-    image: docker.elastic.co/logstash/logstash-oss:6.3.0
+    image: docker.elastic.co/logstash/logstash-oss:6.3.2
     ports:
     - "5044:5044"
     links:
@@ -32,17 +32,17 @@ services:
 
   cerebro:
     image: yannart/cerebro:latest
-    ports:
-    - "9001:9000"
     depends_on:
     - es
+    ports:
+    - "9001:9000"
     links:
     - es:elasticsearch
 
   kibana:
     depends_on:
     - es
-    image: docker.elastic.co/kibana/kibana-oss:6.3.0
+    image: docker.elastic.co/kibana/kibana-oss:6.3.2
     links:
     - es:elasticsearch
     environment:
