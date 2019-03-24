@@ -2,7 +2,7 @@ version: '2'
 
 services:
   es:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.5.4
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.2
     ports:
     - "9200:9200"
     - "9300:9300"
@@ -21,15 +21,6 @@ services:
         soft: 65536
         hard: 65536
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash-oss:6.5.4
-    ports:
-    - "5044:5044"
-    links:
-    - es:elasticsearch
-    volumes:
-    - ./pipeline/:/usr/share/logstash/pipeline/ 
-
   cerebro:
     image: yannart/cerebro:latest
     depends_on:
@@ -42,7 +33,7 @@ services:
   kibana:
     depends_on:
     - es
-    image: docker.elastic.co/kibana/kibana-oss:6.5.4
+    image: docker.elastic.co/kibana/kibana-oss:6.6.2
     links:
     - es:elasticsearch
     environment:
