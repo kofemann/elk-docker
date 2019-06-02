@@ -2,7 +2,7 @@ version: '2'
 
 services:
   es:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.0.0
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.1.0
     ports:
     - "9200:9200"
     - "9300:9300"
@@ -20,6 +20,11 @@ services:
       nofile:
         soft: 65536
         hard: 65536
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "5"
 
   cerebro:
     image: yannart/cerebro:latest
@@ -29,15 +34,25 @@ services:
     - "9001:9000"
     links:
     - es:elasticsearch
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "5"
 
   kibana:
     depends_on:
     - es
-    image: docker.elastic.co/kibana/kibana-oss:7.0.0
+    image: docker.elastic.co/kibana/kibana-oss:7.1.0
     links:
     - es:elasticsearch
     environment:
     - server.name=dcache-lab004.desy.de
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "5"
 
   nginx:
     depends_on:
@@ -46,6 +61,11 @@ services:
     restart: always
     links:
     - kibana:kibana
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "5"
 
     volumes:
     - ./etc/ssl:/etc/nginx/ssl
